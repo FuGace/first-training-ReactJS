@@ -8,7 +8,8 @@ class Quiz extends Component {
     state = {
         activeQuestionCounter: 0, // текущий вопрос
         answerState: null, // сосрояние ответа
-        isFinished: true, // опрос окончен?
+        results: {}, // состояния выбранных вариантов ответа для вывода в финальном слайде
+        isFinished: false, // опрос окончен?
         quiz: [
             {
                 id: 1, // id вопроса
@@ -48,14 +49,22 @@ class Quiz extends Component {
             }
         }
         const question = this.state.quiz[this.state.activeQuestionCounter];
+        let results = this.state.results;
         if (question.rightAnswerId === answerId) {
             // правильный ответ
-            this.setState({answerState: {[answerId]: 'right'}})
+            if (!results[question.id]) {
+                results[question.id] = 'right'
+            }
+            this.setState({
+                answerState: {[answerId]: 'right'},
+                results
+            })
             const timer = window.setTimeout(() => {
                 if (this.state.activeQuestionCounter + 1 === this.state.quiz.length) {
                     // опрос окончен
                     this.setState({
-                        isFinished: true});
+                        isFinished: true
+                    });
                 } else {
                     // очищаем стейт вопроса и переключаемся на следующий вопрос
                     this.setState({
@@ -66,9 +75,22 @@ class Quiz extends Component {
                 window.clearTimeout(timer);
             }, 1000)
         } else {
-            this.setState({answerState: {[answerId]: 'error'}})
+            results[question.id] = 'error'
+            this.setState({
+                answerState: {[answerId]: 'error'},
+                results
+            })
         }
 
+    }
+
+    retryHandler = () => {
+        this.setState({
+            activeQuestionCounter: 0,
+            answerState: null,
+            results: {},
+            isFinished: false
+        })
     }
 
     render() {
@@ -79,8 +101,12 @@ class Quiz extends Component {
                     <h1>Ответьте на все вопросы</h1>
                     {
                         this.state.isFinished ?
-                            <FinishedQuiz />
-                            :  <ActiveQuiz
+                            <FinishedQuiz
+                                quiz={this.state.quiz}
+                                results={this.state.results}
+                                onRetry={this.retryHandler}
+                            />
+                            : <ActiveQuiz
                                 answers={this.state.quiz[this.state.activeQuestionCounter].answers}
                                 question={this.state.quiz[this.state.activeQuestionCounter].question}
                                 onClickAnswer={this.onClickAnswer}
