@@ -61,9 +61,37 @@ class Auth extends Component {
         })
     }
 
+    /**
+     * Обработка и валидация ввода значения в input поле
+     */
     onChangeHandler(event, controlName) {
-        console.log('event', event.target.value)
-        console.log('controlName', controlName)
+        const formControls = {...this.state.formControls};
+        const currentFormControl = formControls[controlName];
+        currentFormControl.value = event.target.value;
+        currentFormControl.touched = true;
+        currentFormControl.valid = this.validateFormControl(currentFormControl.value, currentFormControl.validation)
+        this.setState({
+            formControls
+        })
+    }
+
+    validateFormControl(value, validations) {
+        if (!value) {
+            return false;
+        }
+        let isValid = true;
+
+        if (validations.required) {
+            isValid = value.trim().length && isValid;
+        }
+        if (validations.email) {
+            const emailRegExp = /.+@.+\..+/i;
+            isValid = emailRegExp.test(value) && isValid;
+        }
+        if (validations.minLength) {
+            isValid = value.length >= validations.minLength && isValid;
+        }
+        return isValid;
     }
 
     render() {
