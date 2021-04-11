@@ -31,7 +31,8 @@ class Auth extends Component {
                     minLength: 6
                 }
             }
-        }
+        },
+        isFormValid: false
     }
 
     loginHandler() {
@@ -70,8 +71,11 @@ class Auth extends Component {
         currentFormControl.value = event.target.value;
         currentFormControl.touched = true;
         currentFormControl.valid = this.validateFormControl(currentFormControl.value, currentFormControl.validation)
+
+        let isFormValid = !Object.keys(formControls).find(name => !formControls[name].valid);
         this.setState({
-            formControls
+            formControls,
+            isFormValid
         })
     }
 
@@ -103,6 +107,7 @@ class Auth extends Component {
                           className={classes.AuthForm}>
                         {this.renderInputs()}
                         <Button type='success'
+                                disabled={!this.state.isFormValid}
                                 onClick={this.loginHandler}>Войти
                         </Button>
                         <Button type='primary'
