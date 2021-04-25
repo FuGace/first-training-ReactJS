@@ -14,7 +14,7 @@ class Auth extends Component {
                 errorMessage: 'Введите корректный email',
                 valid: false,
                 touched: false,
-                validation: {
+                validations: {
                     required: true,
                     email: true
                 }
@@ -26,7 +26,7 @@ class Auth extends Component {
                 errorMessage: 'Введите корректный пароль',
                 valid: false,
                 touched: false,
-                validation: {
+                validations: {
                     required: true,
                     minLength: 6
                 }
@@ -55,7 +55,7 @@ class Auth extends Component {
                        valid={formControl.valid}
                        touched={formControl.touched}
                        label={formControl.label}
-                       shouldValidate={!!formControl.validation}
+                       shouldValidate={!!formControl.validations}
                        errorMessage={formControl.errorMessage}
                        onChange={event => this.onChangeHandler(event, controlName)}/>
             )
