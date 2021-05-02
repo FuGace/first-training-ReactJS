@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import classes from './Auth.css'
 import Button from "../../components/UI/Button/Button";
 import Input from "../../components/UI/Input/Input";
+import axios from "axios";
 
 class Auth extends Component {
 
@@ -35,12 +36,32 @@ class Auth extends Component {
         isFormValid: false
     }
 
-    loginHandler() {
+    logInHandler = async () => {
+        try {
+            const params = {
+                email: this.state.formControls.email.value,
+                password: this.state.formControls.password.value,
+                returnSecureToken: true
+            };
 
+            await axios.post('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyB3bgJlq91Rk8O0kMOCH3z0gPFUTFHXn1k', params)
+        } catch (e) {
+            console.error('e', e)
+        }
     }
 
-    registerHandler() {
+    registerHandler = async () => {
+        try {
+            const params = {
+                email: this.state.formControls.email.value,
+                password: this.state.formControls.password.value,
+                returnSecureToken: true
+            };
 
+            await axios.post('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyB3bgJlq91Rk8O0kMOCH3z0gPFUTFHXn1k', params)
+        } catch (e) {
+            console.error('e', e)
+        }
     }
 
     submitHandler = (event) => event.preventDefault();
@@ -70,7 +91,7 @@ class Auth extends Component {
         const currentFormControl = formControls[controlName];
         currentFormControl.value = event.target.value;
         currentFormControl.touched = true;
-        currentFormControl.valid = this.validateFormControl(currentFormControl.value, currentFormControl.validation)
+        currentFormControl.valid = this.validateFormControl(currentFormControl.value, currentFormControl.validations)
 
         let isFormValid = !Object.keys(formControls).find(name => !formControls[name].valid);
         this.setState({
@@ -108,7 +129,7 @@ class Auth extends Component {
                         {this.renderInputs()}
                         <Button type='success'
                                 disabled={!this.state.isFormValid}
-                                onClick={this.loginHandler}>Войти
+                                onClick={this.logInHandler}>Войти
                         </Button>
                         <Button type='primary'
                                 onClick={this.registerHandler}>Зарегистрироваться
